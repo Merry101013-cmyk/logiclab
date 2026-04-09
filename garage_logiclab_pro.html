@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LogicLab - Cibercolegio UCN</title>
+  <style>
+    :root {
+      --bg: #eef4fa;
+      --card: #ffffff;
+      --card-soft: #f7fafc;
+      --line: #d8e3ee;
+      --text: #24364a;
+      --muted: #647b93;
+      --brand: #45376f;
+      --accent: #1398cf;
+      --ok: #22a35a;
+      --warn: #e2a52b;
+      --bad: #de4d65;
+      --shadow: 0 12px 32px rgba(28, 49, 76, 0.12);
+      --radius: 18px;
+      --font: "Segoe UI", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background: linear-gradient(180deg, #edf4fb 0%, #e8f0f8 100%);
+    }
+
+    button, select, input[type="range"] {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 14px 18px;
+      background: #f7fbff;
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 3px 14px rgba(28, 49, 76, 0.08);
+    }
+
+    .brand {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .brand img {
+      width: 200px;
+      max-width: 32vw;
+      display: block;
+      height: auto;
+    }
+
+    .brand h1 {
+      margin-top: 20px;
+      margin-left: 50px;
+      color: var(--brand);
+      font-size: 1.7rem;
+    }
+
+    .brand p, .top-pill {
+      margin: 0;
+      margin-left: 20px;
+      color: var(--muted);  
+    }
+
+    .top-pill {
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--card-soft);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 18px;
+      padding: 18px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-head {
+      padding: 16px 18px 8px;
+    }
+
+    .card-body {
+      padding: 0 18px 18px;
+    }
+
+    .card h2, .card h3, .card p {
+      margin: 0;
+    }
+
+    .card h2 {
+      font-size: 1.08rem;
+      margin-bottom: 6px;
+    }
+
+    .card h3 {
+      color: var(--brand);
+      font-size: 0.96rem;
+      margin-bottom: 8px;
+    }
+
+    .card p, .card li, .card small, .card label, .card td, .card th {
+      color: var(--muted);
+      line-height: 1.42;
+    }
+
+    .nav-list, .mini-list, .statement-list, .guide-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .nav-btn, .btn {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #f7fbff;
+      color: var(--text);
+      padding: 11px 13px;
+      cursor: pointer;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+
+    .nav-btn:hover, .btn:hover {
+      transform: translateY(-1px);
+      border-color: #9fc5db;
+      background: #eef7fd;
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(180deg, rgba(19, 152, 207, 0.14), rgba(69, 55, 111, 0.10));
+      border-color: rgba(19, 152, 207, 0.40);
+      color: var(--brand);
+      font-weight: 700;
+    }
+
+    .nav-btn strong {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .hero {
+      padding: 18px;
+      background: linear-gradient(135deg, rgba(69, 55, 111, .10), rgba(19, 152, 207, .08));
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero h2 {
+      color: var(--brand);
+      font-size: 1.45rem;
+      margin: 0;
+    }
+
+    .hero-grid, .metric-grid, .two-col, .form-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .metric-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .two-col {
+      grid-template-columns: 1.25fr 0.95fr;
+    }
+
+    .form-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .info, .metric, .formula, .gate-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--card-soft);
+      padding: 14px;
+    }
+
+    .metric .value {
+      margin-top: 10px;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .toolbar {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .input-grid, .out-grid, .lamp-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .input-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .out-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .lamp-grid {
+      grid-template-columns: repeat(3, auto);
+      align-items: center;
+      justify-content: start;
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--card-soft);
+    }
+
+    .toggle input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
+
+    .light {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid #c7d3de;
+      background: #dbe4ec;
+    }
+
+    .light.red.on { background: var(--bad); box-shadow: 0 0 0 6px rgba(222, 77, 101, 0.12); }
+    .light.yellow.on { background: var(--warn); box-shadow: 0 0 0 6px rgba(226, 165, 43, 0.14); }
+    .light.green.on { background: var(--ok); box-shadow: 0 0 0 6px rgba(34, 163, 90, 0.12); }
+
+    .gate-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .gate-card h4 {
+      margin: 0 0 8px;
+      color: var(--brand);
+    }
+
+    .gate-card select, .controls select, .controls input[type="range"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .row {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+    }
+
+    .status {
+      min-height: 24px;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    .ok { color: var(--ok); }
+    .warn { color: var(--warn); }
+    .bad { color: var(--bad); }
+
+    .svg-wrap {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fbfdff;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .scene-img {
+      width: 100%;
+      display: none;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      margin-bottom: 12px;
+    }
+
+    .table-wrap {
+      max-height: 370px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fbfdff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      padding: 9px 8px;
+      text-align: center;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #f0f6fb;
+      color: var(--text);
+      z-index: 1;
+    }
+
+    tr.current {
+      background: rgba(19, 152, 207, 0.12);
+    }
+
+    #errorBox {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #fff2f4;
+      color: var(--bad);
+      border: 1px solid #f2c2cb;
+      font-weight: 600;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 1280px) {
+      .layout { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+      .hero-grid, .metric-grid, .input-grid, .out-grid, .form-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 860px) {
+      .topbar { grid-template-columns: 1fr; }
+      .brand { flex-direction: column; align-items: flex-start; }
+      .hero-grid, .metric-grid, .input-grid, .out-grid, .form-grid, .toolbar { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img src="/Users/johana/Library/CloudStorage/OneDrive-FUCN/2026/LOGO%20CIBER.png" alt="Cibercolegio UCN">
+        <div >
+            <h1>Ciber LogicLab</h1>
+            <p>Laboratorio interactivo de lógica digital.</p>
+        </div>
+      </div>
+      <div class="top-pill">Developed by Mary J. Galeano</div>
+      <div class="top-pill" id="topState">Sistema validado y en ejecución</div>
+    </header>
+
+    <div class="layout">
+      <aside class="stack">
+        <section class="card">
+          <div class="card-head">
+            <h2>Panel de acceso</h2>
+            <p>Cada módulo funciona de forma independiente.</p>
+          </div>
+          <div class="card-body nav-list" id="navList"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <h2>Uso rápido</h2>
+          </div>
+          <div class="card-body mini-list">
+            <div class="info"><strong>1. Lee el enunciado</strong><p>Entiende entradas, salidas y comportamiento esperado.</p></div>
+            <div class="info"><strong>2. Arma el circuito</strong><p>Usa compuertas y elige qué señal entra a cada punto.</p></div>
+            <div class="info"><strong>3. Comprueba</strong><p>El semáforo compara tu circuito con la tabla de verdad correcta.</p></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <h2>Guía del estudiante</h2>
+            <p>Lee esto antes de empezar a interactuar con la simulación.</p>
+          </div>
+          <div class="card-body">
+            <div class="guide-list" id="studentGuide"></div>
+          </div>
+        </section>
+
+      </aside>
+
+      <main class="stack">
+        <section class="card">
+          <div class="hero">
+            <h2 id="simTitle">Ciber LogicLab</h2>
+            <p id="simSubtitle">Selecciona una simulación desde el panel izquierdo.</p>
+            <div class="hero-grid">
+              <div class="info"><strong>Entradas</strong><p id="simInputs"></p></div>
+              <div class="info"><strong>Salidas</strong><p id="simOutputs"></p></div>
+              <div class="info"><strong>Modo</strong><p id="simType"></p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="two-col">
+          <div class="stack">
+            <section class="card">
+              <div class="card-head">
+                <h2>Enunciado del ejercicio</h2>
+                <p>Lee el problema antes de modificar el circuito.</p>
+              </div>
+              <div class="card-body statement-list" id="statementList"></div>
+            </section>
+
+            <section class="card">
+              <div class="card-head">
+                <h2>Constructor de compuertas</h2>
+                <p>Las conexiones se hacen con selectores para que el uso sea estable y sencillo.</p>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <select id="newGateType">
+                    <option value="AND">AND</option>
+                    <option value="OR">OR</option>
+                    <option value="NOT">NOT</option>
+                  </select>
+                  <button class="btn" id="addGateBtn">Agregar compuerta</button>
+                </div>
+                <div class="toolbar" style="margin-top:10px;">
+                  <button class="btn" id="loadGuideBtn">Cargar solución guía</button>
+                  <button class="btn" id="resetCircuitBtn">Reiniciar circuito</button>
+                </div>
+                <div class="gate-list" id="gateList"></div>
+                <div class="status" id="builderStatus"></div>
+              </div>
+            </section>
+
+
+            <section class="card">
+              <div class="card-head">
+                <h2>Tabla de verdad</h2>
+                <p>La fila activa se resalta según las entradas actuales.</p>
+              </div>
+              <div class="card-body">
+                <div class="table-wrap">
+                  <table>
+                    <thead id="truthHead"></thead>
+                    <tbody id="truthBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="stack">
+            <section class="card">
+              <div class="card-head">
+                <h2>Panel de interacción</h2>
+                <p>Modifica entradas y ejecuta la simulación.</p>
+              </div>
+              <div class="card-body controls" id="controlsPanel"></div>
+            </section>
+
+
+            <section class="card">
+              <div class="card-head">
+                <h2>Escena / plano físico</h2>
+                <p>Se actualiza con las salidas del circuito.</p>
+              </div>
+              <div class="card-body">
+                <img id="sceneImage" class="scene-img" alt="Referencia del sistema">
+                <div class="svg-wrap">
+                  <svg id="sceneSvg" viewBox="0 0 860 430" role="img" aria-label="Escena física"></svg>
+                </div>
+                <div class="status" id="sceneStatus"></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-head">
+                <h2>Plano estructural</h2>
+                <p>Representación visual del circuito construido.</p>
+              </div>
+              <div class="card-body">
+                <div class="svg-wrap">
+                  <svg id="logicSvg" viewBox="0 0 1040 560" role="img" aria-label="Plano estructural del circuito"></svg>
+                </div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-head">
+                <h2>Semáforo de validación</h2>
+                <p>Compara tu circuito con la respuesta correcta.</p>
+              </div>
+              <div class="card-body">
+                <div class="lamp-grid">
+                  <div class="light red" id="redLight"></div>
+                  <div class="light yellow" id="yellowLight"></div>
+                  <div class="light green" id="greenLight"></div>
+                </div>
+                <div class="metric-grid" style="margin-top:14px;">
+                  <div class="metric"><strong>Coincidencia total</strong><div class="value" id="matchValue">0%</div><small id="matchNote">Sin revisar</small></div>
+                  <div class="metric"><strong>Fila actual</strong><div class="value" id="rowValue">0/0</div><small id="rowNote">Sin revisar</small></div>
+                  <div class="metric"><strong>Entradas</strong><div class="value" id="inputStateValue">-</div><small>Estado de prueba</small></div>
+                  <div class="metric"><strong>Salidas</strong><div class="value" id="outputStateValue">-</div><small>Resultado del circuito</small></div>
+                </div>
+                <div class="status" id="validationStatus"></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-head">
+                <h2>Funciones lógicas simplificadas</h2>
+              </div>
+              <div class="card-body">
+                <div class="toolbar">
+                  <button class="btn" id="toggleFormulasBtn">Mostrar u ocultar fórmulas</button>
+                  <button class="btn" id="stepBtn">Ejecutar paso</button>
+                </div>
+                <div class="form-grid" id="formulaGrid" style="margin-top:12px;"></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-head">
+                <h2>Resumen técnico</h2>
+              </div>
+              <div class="card-body guide-list" id="guideList"></div>
+            </section>
+
+            <div id="errorBox"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const ui = {
+      topState: document.getElementById("topState"),
+      navList: document.getElementById("navList"),
+      simTitle: document.getElementById("simTitle"),
+      simSubtitle: document.getElementById("simSubtitle"),
+      simInputs: document.getElementById("simInputs"),
+      simOutputs: document.getElementById("simOutputs"),
+      simType: document.getElementById("simType"),
+      statementList: document.getElementById("statementList"),
+      gateList: document.getElementById("gateList"),
+      builderStatus: document.getElementById("builderStatus"),
+      logicSvg: document.getElementById("logicSvg"),
+      truthHead: document.getElementById("truthHead"),
+      truthBody: document.getElementById("truthBody"),
+      controlsPanel: document.getElementById("controlsPanel"),
+      redLight: document.getElementById("redLight"),
+      yellowLight: document.getElementById("yellowLight"),
+      greenLight: document.getElementById("greenLight"),
+      matchValue: document.getElementById("matchValue"),
+      matchNote: document.getElementById("matchNote"),
+      rowValue: document.getElementById("rowValue"),
+      rowNote: document.getElementById("rowNote"),
+      inputStateValue: document.getElementById("inputStateValue"),
+      outputStateValue: document.getElementById("outputStateValue"),
+      validationStatus: document.getElementById("validationStatus"),
+      formulaGrid: document.getElementById("formulaGrid"),
+      sceneImage: document.getElementById("sceneImage"),
+      sceneSvg: document.getElementById("sceneSvg"),
+      sceneStatus: document.getElementById("sceneStatus"),
+      guideList: document.getElementById("guideList"),
+      studentGuide: document.getElementById("studentGuide"),
+      newGateType: document.getElementById("newGateType"),
+      addGateBtn: document.getElementById("addGateBtn"),
+      loadGuideBtn: document.getElementById("loadGuideBtn"),
+      resetCircuitBtn: document.getElementById("resetCircuitBtn"),
+      toggleFormulasBtn: document.getElementById("toggleFormulasBtn"),
+      stepBtn: document.getElementById("stepBtn"),
+      errorBox: document.getElementById("errorBox")
+    };
+
+    const APP = {
+      currentSimId: "sim1",
+      formulasVisible: true
+    };
+
+    function sensorRef(key) { return { kind: "sensor", key }; }
+    function gateRef(id) { return { kind: "gate", id }; }
+    function constRef(value) { return { kind: "const", value }; }
+    function cloneRef(ref) { return ref ? JSON.parse(JSON.stringify(ref)) : null; }
+
+    const SIMS = {
+      sim1: {
+        id: "sim1",
+        title: "Simulación 1 - Garaje inteligente",
+        subtitle: "Puerta automática con sensores, relés y movimiento físico del vehículo.",
+        type: "Simulación física + circuito lógico",
+        inputs: [
+          { key: "X", label: "X", desc: "Vehículo frente a la puerta" },
+          { key: "Z", label: "Z", desc: "Vehículo después de la puerta" },
+          { key: "B", label: "B", desc: "Puerta totalmente cerrada" },
+          { key: "S", label: "S", desc: "Puerta totalmente abierta" }
+        ],
+        outputs: [
+          { key: "A", label: "A", desc: "Relé abrir" },
+          { key: "C", label: "C", desc: "Relé cerrar" },
+          { key: "V", label: "V", desc: "Luz verde" },
+          { key: "R", label: "R", desc: "Luz roja" }
+        ],
+        statement: [
+          "X vale 1 cuando un vehículo está situado delante de la puerta.",
+          "Z vale 1 cuando el vehículo ya ha pasado la puerta y pisa el sensor del otro lado.",
+          "B vale 1 cuando la puerta está completamente bajada y S vale 1 cuando está completamente subida.",
+          "A abre la puerta, C la cierra, V enciende la luz verde y R la luz roja.",
+          "Cuando el coche llega a X la puerta debe abrirse. Cuando pase por Z la puerta debe cerrarse."
+        ],
+        guide: [
+          "La apertura debe mantenerse hasta que S = 1.",
+          "El cierre debe mantenerse hasta que B = 1.",
+          "Si fuerzas el paso con la puerta mal controlada, el coche puede chocar."
+        ],
+        studentGuide: {
+          what: "Debes construir el circuito que controle la puerta del garaje según los sensores X, Z, B y S.",
+          modify: "Puedes cambiar compuertas, entradas del circuito, modo manual o automático, lanzar el carro y detenerlo cuando quieras.",
+          observe: "Observa si la puerta abre o cierra, si el carro logra pasar, si se produce choque y cómo cambian A, C, V y R.",
+          goal: "Debes lograr que la puerta abra al llegar a X, que permita el paso del carro y que luego se cierre después de Z."
+        },
+        formulas: {
+          A: "A = X · S'",
+          C: "C = Z + B' · S' · X'",
+          V: "V = S",
+          R: "R = B + C"
+        },
+        reference(values) {
+          return {
+            A: values.X && !values.S ? 1 : 0,
+            C: values.Z || (!values.B && !values.S && !values.X) ? 1 : 0,
+            V: values.S ? 1 : 0,
+            R: values.B || (values.Z || (!values.B && !values.S && !values.X)) ? 1 : 0
+          };
+        },
+        guideCircuit() {
+          return {
+            gates: [
+              { type: "NOT", inputs: [sensorRef("S")] },
+              { type: "AND", inputs: [sensorRef("X"), gateRef(1)] },
+              { type: "NOT", inputs: [sensorRef("B")] },
+              { type: "AND", inputs: [gateRef(3), gateRef(1)] },
+              { type: "NOT", inputs: [sensorRef("X")] },
+              { type: "AND", inputs: [gateRef(4), gateRef(5)] },
+              { type: "OR", inputs: [sensorRef("Z"), gateRef(6)] },
+              { type: "OR", inputs: [sensorRef("B"), gateRef(7)] }
+            ],
+            outputs: { A: gateRef(2), C: gateRef(7), V: sensorRef("S"), R: gateRef(8) }
+          };
+        },
+        createState() {
+          return {
+            mode: "auto",
+            manual: { X: 0, Z: 0, door: 0 },
+            extra: { doorPos: 0, carX: 690, active: false, force: false, crashed: false }
+          };
+        },
+        getInputs(state) {
+          const inputs = {
+            B: state.extra.doorPos <= 0.001 ? 1 : 0,
+            S: state.extra.doorPos >= 0.999 ? 1 : 0,
+            X: 0,
+            Z: 0
+          };
+          if (state.mode === "manual") {
+            inputs.X = state.manual.X ? 1 : 0;
+            inputs.Z = state.manual.Z ? 1 : 0;
+            return inputs;
+          }
+          if (!state.extra.active) return inputs;
+          const cx = state.extra.carX + 52;
+          inputs.X = Math.abs(cx - 506) <= 42 ? 1 : 0;
+          inputs.Z = Math.abs(cx - 146) <= 42 ? 1 : 0;
+          return inputs;
+        },
+        step(state, outputs, dt) {
+          if (state.mode === "manual") {
+            state.extra.doorPos = clamp(state.manual.door / 100, 0, 1);
+            return;
+          }
+          if (outputs.A && !outputs.C) state.extra.doorPos = clamp(state.extra.doorPos + 0.48 * dt, 0, 1);
+          if (outputs.C && !outputs.A) state.extra.doorPos = clamp(state.extra.doorPos - 0.48 * dt, 0, 1);
+          if (!state.extra.active || state.extra.crashed) return;
+          const stopPoint = 340;
+          const front = state.extra.carX + 16;
+          if (state.extra.doorPos >= 0.82 || state.extra.force || front > stopPoint) {
+            state.extra.carX -= 125 * dt;
+          } else {
+            state.extra.carX = Math.max(state.extra.carX, stopPoint - 16);
+          }
+          if (state.extra.force && state.extra.doorPos < 0.35 && front <= 304) {
+            state.extra.crashed = true;
+            state.extra.active = false;
+          }
+          if (state.extra.carX < -230) state.extra.active = false;
+        },
+        status(state, outputs) {
+          if (state.extra.crashed) return "El vehículo se estrelló porque el circuito no abrió la puerta a tiempo.";
+          if (outputs.A && !outputs.C) return "La puerta está subiendo.";
+          if (outputs.C && !outputs.A) return "La puerta está bajando.";
+          if (state.extra.active) return "El vehículo está avanzando o esperando.";
+          return "Escena lista para lanzar un vehículo.";
+        },
+        renderScene(state, outputs, svg) {
+          const inputs = this.getInputs(state);
+          svg.innerHTML = `
+            <rect x="0" y="0" width="860" height="430" fill="#fbfdff"></rect>
+            <line x1="28" y1="335" x2="832" y2="335" stroke="#1b2026" stroke-width="3"></line>
+            <path d="M300 335 L300 66 L356 66 L420 110" fill="none" stroke="#1b2026" stroke-width="4"></path>
+            <line x1="182" y1="145" x2="414" y2="122" stroke="#1b2026" stroke-dasharray="10 10" stroke-width="3"></line>
+            <rect x="286" y="${335 - 180 + (1 - state.extra.doorPos) * 180}" width="28" height="180" fill="#fff" stroke="#1b2026" stroke-width="3"></rect>
+            ${sensorFloor(506, 335, "X", inputs.X)}
+            ${sensorFloor(146, 335, "Z", inputs.Z)}
+            ${sensorFloor(300, 335, "B", inputs.B)}
+            ${sensorTop(314, 64, "S", inputs.S)}
+            ${carSvg(state.extra.carX, 294, state.extra.crashed)}
+            ${lampSvg(645, 90, outputs.V, "#22a35a", "V")}
+            ${lampSvg(710, 90, outputs.R, "#de4d65", "R")}
+            <text x="600" y="150" fill="#24364a" font-size="16">A = ${outputs.A} | C = ${outputs.C}</text>
+            <text x="600" y="180" fill="#24364a" font-size="16">Puerta = ${Math.round(state.extra.doorPos * 100)}%</text>
+            <text x="600" y="210" fill="#24364a" font-size="16">Modo = ${state.mode}</text>
+          `;
+        }
+      },
+      sim2: baseSim(
+        "sim2",
+        "Simulación 2 - Motor con pulsadores",
+        "Sistema de marcha y paro con memoria del estado previo.",
+        "Sistema secuencial con memoria",
+        [
+          { key: "M", label: "M", desc: "Pulsador de marcha" },
+          { key: "P", label: "P", desc: "Pulsador de paro" },
+          { key: "Q", label: "Q", desc: "Estado previo del motor" }
+        ],
+        [{ key: "Y", label: "Y", desc: "Motor" }],
+        [
+          "Pulsando M el motor arranca.",
+          "Al dejar de pulsar M, el motor debe seguir encendido.",
+          "Pulsando P el motor se para y debe seguir parado.",
+          "Si se pulsan M y P a la vez, el motor debe quedar parado."
+        ],
+        ["Se necesita memoria, representada por Q.", "P tiene prioridad de paro sobre M."],
+        {
+          what: "Debes diseñar un circuito con memoria para encender y apagar un motor con dos pulsadores.",
+          modify: "Puedes cambiar M, P y Q, además de reorganizar las compuertas y sus conexiones.",
+          observe: "Observa si el motor queda encendido después de pulsar M y si se apaga correctamente con P.",
+          goal: "Debes conseguir que M arranque, que P detenga y que P tenga prioridad si ambos pulsadores se accionan al tiempo."
+        },
+        { Y: "Y = (M + Q) · P'" },
+        (v) => ({ Y: ((v.M || v.Q) && !v.P) ? 1 : 0 }),
+        () => ({
+          gates: [
+            { type: "OR", inputs: [sensorRef("M"), sensorRef("Q")] },
+            { type: "NOT", inputs: [sensorRef("P")] },
+            { type: "AND", inputs: [gateRef(1), gateRef(2)] }
+          ],
+          outputs: { Y: gateRef(3) }
+        }),
+        (state, outputs) => { state.manual.Q = outputs.Y; },
+        (state, outputs, svg) => genericScene(svg, "Motor con pulsadores", [
+          `M = ${state.manual.M}`, `P = ${state.manual.P}`, `Q previo = ${state.manual.Q}`, `Motor = ${outputs.Y}`
+        ], outputs.Y ? "#22a35a" : "#94a3b8")
+      ),
+      sim3: baseSim(
+        "sim3",
+        "Simulación 3 - Alarma con dos puertas",
+        "Sistema de alarma con una señal de armado y dos sensores de puertas.",
+        "Sistema combinacional",
+        [
+          { key: "a", label: "a", desc: "Alarma armada" },
+          { key: "b", label: "b", desc: "Puerta 1 abierta" },
+          { key: "c", label: "c", desc: "Puerta 2 abierta" }
+        ],
+        [{ key: "z", label: "z", desc: "Zumbador" }],
+        [
+          "La alarma se arma con la señal a.",
+          "Las señales b y c se activan cuando cada puerta se abre.",
+          "Si la alarma está armada y se abre alguna puerta, debe sonar el zumbador."
+        ],
+        ["La salida requiere a = 1 y al menos una puerta abierta."],
+        {
+          what: "Debes construir la lógica de una alarma que solo se active cuando el sistema esté armado y se abra alguna puerta.",
+          modify: "Puedes cambiar las entradas a, b y c y reconstruir el circuito con compuertas.",
+          observe: "Observa cuándo se activa el zumbador y en qué combinaciones debe permanecer apagado.",
+          goal: "Debes lograr que la alarma solo suene cuando a = 1 y al menos una de las puertas esté abierta."
+        },
+        { z: "z = a · (b + c)" },
+        (v) => ({ z: (v.a && (v.b || v.c)) ? 1 : 0 }),
+        () => ({
+          gates: [
+            { type: "OR", inputs: [sensorRef("b"), sensorRef("c")] },
+            { type: "AND", inputs: [sensorRef("a"), gateRef(1)] }
+          ],
+          outputs: { z: gateRef(2) }
+        }),
+        () => {},
+        (state, outputs, svg) => genericScene(svg, "Alarma", [
+          `a = ${state.manual.a}`, `b = ${state.manual.b}`, `c = ${state.manual.c}`, `Zumbador = ${outputs.z}`
+        ], outputs.z ? "#de4d65" : "#94a3b8")
+      ),
+      sim4: baseSim(
+        "sim4",
+        "Simulación 4 - Limpiaparabrisas",
+        "Control lógico del limpiaparabrisas con final de carrera.",
+        "Sistema secuencial con memoria",
+        [
+          { key: "C", label: "C", desc: "Llave de contacto" },
+          { key: "L", label: "L", desc: "Interruptor del limpiaparabrisas" },
+          { key: "F", label: "F", desc: "Final de carrera en reposo" },
+          { key: "Q", label: "Q", desc: "Estado previo del motor" }
+        ],
+        [{ key: "M", label: "M", desc: "Motor del limpiaparabrisas" }],
+        [
+          "Con C = 1 y L = 1 el motor debe funcionar.",
+          "Si L pasa a 0, el motor debe seguir hasta volver al punto de reposo.",
+          "F detecta el punto de reposo."
+        ],
+        ["La memoria del estado previo se representa con Q."],
+        {
+          what: "Debes diseñar el circuito que controle el limpiaparabrisas para que no se detenga a mitad del recorrido.",
+          modify: "Puedes cambiar C, L, F y Q, además de probar distintas combinaciones de compuertas.",
+          observe: "Observa si el motor sigue funcionando aunque se suelte L y si se detiene solo al llegar al reposo.",
+          goal: "Debes conseguir que el motor continúe activo hasta el final de carrera correcto y luego se detenga."
+        },
+        { M: "M = C · (L + Q · F')" },
+        (v) => ({ M: (v.C && (v.L || (v.Q && !v.F))) ? 1 : 0 }),
+        () => ({
+          gates: [
+            { type: "NOT", inputs: [sensorRef("F")] },
+            { type: "AND", inputs: [sensorRef("Q"), gateRef(1)] },
+            { type: "OR", inputs: [sensorRef("L"), gateRef(2)] },
+            { type: "AND", inputs: [sensorRef("C"), gateRef(3)] }
+          ],
+          outputs: { M: gateRef(4) }
+        }),
+        (state, outputs) => { state.manual.Q = outputs.M; },
+        (state, outputs, svg) => genericScene(svg, "Limpiaparabrisas", [
+          `C = ${state.manual.C}`, `L = ${state.manual.L}`, `F = ${state.manual.F}`, `Q previo = ${state.manual.Q}`, `Motor = ${outputs.M}`
+        ], outputs.M ? "#1398cf" : "#94a3b8")
+      ),
+      sim5: baseSim(
+        "sim5",
+        "Simulación 5 - Riego automático",
+        "Control del invernadero con riego, ventilación, llenado y alarma.",
+        "Sistema combinacional",
+        [
+          { key: "S", label: "S", desc: "Sequedad" },
+          { key: "T", label: "T", desc: "Temperatura alta" },
+          { key: "A", label: "A", desc: "Hay agua" }
+        ],
+        [
+          { key: "VR", label: "VR", desc: "Válvula de riego" },
+          { key: "AV", label: "AV", desc: "Abre ventanas" },
+          { key: "GD", label: "GD", desc: "Grifo depósito" },
+          { key: "LA", label: "LA", desc: "Luz alarma" }
+        ],
+        [
+          "Se riega si hay sequedad, no hace calor y hay agua.",
+          "Se abren ventanas si la temperatura es alta.",
+          "Se llena el depósito si ya no hay agua.",
+          "La alarma se enciende si hay sequedad y no hay agua."
+        ],
+        ["VR requiere tres condiciones. GD y LA dependen de A negada."],
+        {
+          what: "Debes construir el control lógico del invernadero usando tres sensores y cuatro salidas.",
+          modify: "Puedes cambiar S, T y A y observar cómo responden VR, AV, GD y LA.",
+          observe: "Observa qué salida se activa según la sequedad, la temperatura y la disponibilidad de agua.",
+          goal: "Debes lograr que las cuatro salidas respondan exactamente a las condiciones del problema."
+        },
+        {
+          VR: "VR = S · T' · A",
+          AV: "AV = T",
+          GD: "GD = A'",
+          LA: "LA = S · A'"
+        },
+        (v) => ({
+          VR: (v.S && !v.T && v.A) ? 1 : 0,
+          AV: v.T ? 1 : 0,
+          GD: v.A ? 0 : 1,
+          LA: (v.S && !v.A) ? 1 : 0
+        }),
+        () => ({
+          gates: [
+            { type: "NOT", inputs: [sensorRef("T")] },
+            { type: "AND", inputs: [sensorRef("S"), gateRef(1)] },
+            { type: "AND", inputs: [gateRef(2), sensorRef("A")] },
+            { type: "NOT", inputs: [sensorRef("A")] },
+            { type: "AND", inputs: [sensorRef("S"), gateRef(4)] }
+          ],
+          outputs: { VR: gateRef(3), AV: sensorRef("T"), GD: gateRef(4), LA: gateRef(5) }
+        }),
+        () => {},
+        (state, outputs, svg) => genericScene(svg, "Invernadero", [
+          `S = ${state.manual.S}`, `T = ${state.manual.T}`, `A = ${state.manual.A}`, `VR = ${outputs.VR} | AV = ${outputs.AV}`, `GD = ${outputs.GD} | LA = ${outputs.LA}`
+        ], outputs.LA ? "#de4d65" : outputs.VR ? "#22a35a" : "#94a3b8")
+      ),
+      sim6: baseSim(
+        "sim6",
+        "Simulación 6 - Llenado automático de garrafas de agua",
+        "Cinta transportadora y válvula de llenado del sistema de aceite.",
+        "Sistema combinacional con referencia física",
+        [
+          { key: "A", label: "A", desc: "Garrafa en boquilla" },
+          { key: "X", label: "X", desc: "Garrafa lleno" },
+          { key: "B", label: "B", desc: "Garrafa al final" },
+          { key: "P", label: "P", desc: "Pedal de parada" }
+        ],
+        [
+          { key: "M", label: "M", desc: "Motor cinta" },
+          { key: "V", label: "V", desc: "Válvula de llenado" }
+        ],
+        [
+          "La cinta debe pararse cuando una garrafa de agua llega a la boquilla para llenarse.",
+          "La válvula se abre solo si la garrafa de agua está en la boquilla y aún no está lleno.",
+          "El pedal P y el sensor B obligan a detener la cinta por seguridad."
+        ],
+        ["La cinta se mueve si no está llenando y no hay condiciones de paro."],
+        {
+          what: "Debes diseñar el circuito que controle la cinta transportadora y la válvula de llenado.",
+          modify: "Puedes cambiar A, X, B y P, y reorganizar las compuertas del sistema.",
+          observe: "Observa cuándo se mueve la cinta, cuándo se detiene y en qué momento se abre o cierra la válvula.",
+          goal: "Debes lograr un sistema seguro: la cinta debe pararse al llenar o por seguridad, y la válvula solo debe abrirse cuando corresponde."
+        },
+        { M: "M = (A' + X) · B' · P'", V: "V = A · X'" },
+        (v) => ({
+          M: (((!v.A) || v.X) && !v.B && !v.P) ? 1 : 0,
+          V: (v.A && !v.X) ? 1 : 0
+        }),
+        () => ({
+          gates: [
+            { type: "NOT", inputs: [sensorRef("A")] },
+            { type: "OR", inputs: [gateRef(1), sensorRef("X")] },
+            { type: "NOT", inputs: [sensorRef("B")] },
+            { type: "AND", inputs: [gateRef(2), gateRef(3)] },
+            { type: "NOT", inputs: [sensorRef("P")] },
+            { type: "AND", inputs: [gateRef(4), gateRef(5)] },
+            { type: "NOT", inputs: [sensorRef("X")] },
+            { type: "AND", inputs: [sensorRef("A"), gateRef(7)] }
+          ],
+          outputs: { M: gateRef(6), V: gateRef(8) }
+        }),
+        () => {},
+        (state, outputs, svg) => genericScene(svg, "Llenado de garrafas de agua", [
+          `A = ${state.manual.A}`, `X = ${state.manual.X}`, `B = ${state.manual.B}`, `P = ${state.manual.P}`, `M = ${outputs.M} | V = ${outputs.V}`
+        ], outputs.V ? "#1398cf" : outputs.M ? "#22a35a" : "#94a3b8"),
+        "/var/folders/bj/2sbvq5310lzf3cgwcjj3rdrh0000gn/T/TemporaryItems/NSIRD_screencaptureui_KH0CTX/Captura%20de%20pantalla%202026-04-09%20a%20la(s)%2010.15.42%E2%80%AFa.m..png"
+      )
+    };
+
+    function baseSim(id, title, subtitle, type, inputs, outputs, statement, guide, studentGuide, formulas, reference, guideCircuit, step, renderScene, sceneImage) {
+      return {
+        id, title, subtitle, type, inputs, outputs, statement, guide, studentGuide, formulas, reference, guideCircuit,
+        createState() {
+          const manual = {};
+          inputs.forEach((input) => { manual[input.key] = 0; });
+          return { manual };
+        },
+        getInputs(state) {
+          return { ...state.manual };
+        },
+        step,
+        status(state, outputs) {
+          return outputs[outputs && Object.keys(outputs)[0]] ? "La salida principal está activa." : "La salida principal está inactiva.";
+        },
+        renderScene(state, outputs, svg) {
+          renderScene(state, outputs, svg);
+        },
+        sceneImage
+      };
+    }
+
+    const states = {};
+    Object.values(SIMS).forEach((sim) => {
+      states[sim.id] = createStateForSim(sim);
+    });
+
+    function createStateForSim(sim) {
+      const circuit = sim.guideCircuit();
+      return {
+        data: sim.createState(),
+        gates: circuit.gates.map((gate, index) => ({
+          id: index + 1,
+          type: gate.type,
+          inputs: gate.inputs.map(cloneRef)
+        })),
+        outputsMap: Object.fromEntries(sim.outputs.map((output) => [output.key, cloneRef(circuit.outputs[output.key] || null)]))
+      };
+    }
+
+    function normalizeGateReferences(state) {
+      const idMap = new Map();
+      state.gates.forEach((gate, index) => {
+        idMap.set(gate.id, index + 1);
+      });
+
+      state.gates = state.gates.map((gate, index) => ({
+        ...gate,
+        id: index + 1,
+        inputs: gate.inputs.map((input) => remapRef(input, idMap))
+      }));
+
+      Object.keys(state.outputsMap).forEach((key) => {
+        state.outputsMap[key] = remapRef(state.outputsMap[key], idMap);
+      });
+    }
+
+    function remapRef(ref, idMap) {
+      if (!ref) return null;
+      if (ref.kind !== "gate") return cloneRef(ref);
+      if (!idMap.has(ref.id)) return null;
+      return gateRef(idMap.get(ref.id));
+    }
+
+    function currentSim() { return SIMS[APP.currentSimId]; }
+    function currentState() { return states[APP.currentSimId]; }
+
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+    function evaluateCircuit(sim, state, inputValues) {
+      const memo = new Map();
+      const visiting = new Set();
+      function readRef(ref) {
+        if (!ref) return 0;
+        if (ref.kind === "sensor") return inputValues[ref.key] ? 1 : 0;
+        if (ref.kind === "const") return ref.value ? 1 : 0;
+        if (ref.kind === "gate") {
+          if (memo.has(ref.id)) return memo.get(ref.id);
+          if (visiting.has(ref.id)) return 0;
+          const gate = state.gates.find((g) => g.id === ref.id);
+          if (!gate) return 0;
+          visiting.add(ref.id);
+          const vals = gate.inputs.map((input) => readRef(input));
+          let result = 0;
+          if (gate.type === "AND") result = vals[0] && vals[1] ? 1 : 0;
+          if (gate.type === "OR") result = vals[0] || vals[1] ? 1 : 0;
+          if (gate.type === "NOT") result = vals[0] ? 0 : 1;
+          visiting.delete(ref.id);
+          memo.set(ref.id, result);
+          return result;
+        }
+        return 0;
+      }
+      const out = {};
+      sim.outputs.forEach((output) => {
+        out[output.key] = readRef(state.outputsMap[output.key]);
+      });
+      return out;
+    }
+
+    function makeTruthRows(sim) {
+      const keys = sim.inputs.map((input) => input.key);
+      const total = 1 << keys.length;
+      const rows = [];
+      for (let mask = 0; mask < total; mask++) {
+        const input = {};
+        keys.forEach((key, idx) => { input[key] = (mask >> (keys.length - idx - 1)) & 1; });
+        rows.push({ input, out: sim.reference(input) });
+      }
+      return rows;
+    }
+
+    function buildNav() {
+      ui.navList.innerHTML = "";
+      const buttons = [
+        ["sim1", "Simulación 1", "Garaje inteligente"],
+        ["sim2", "Simulación 2", "Motor con marcha y paro"],
+        ["sim3", "Simulación 3", "Alarma con puertas"],
+        ["sim4", "Simulación 4", "Limpiaparabrisas"],
+        ["sim5", "Simulación 5", "Riego automático"],
+        ["sim6", "Simulación 6", "Llenado de garrafas de agua"]
+      ];
+      buttons.forEach(([id, title, subtitle]) => {
+        const btn = document.createElement("button");
+        btn.className = "nav-btn" + (APP.currentSimId === id ? " active" : "");
+        btn.innerHTML = `<strong>${title}</strong><span>${subtitle}</span>`;
+        btn.onclick = () => {
+          APP.currentSimId = id;
+          render();
+        };
+        ui.navList.appendChild(btn);
+      });
+    }
+
+    function renderStatements(sim) {
+      ui.statementList.innerHTML = "";
+      sim.statement.forEach((line) => {
+        const div = document.createElement("div");
+        div.className = "info";
+        div.textContent = line;
+        ui.statementList.appendChild(div);
+      });
+    }
+
+    function renderGuide(sim) {
+      ui.guideList.innerHTML = "";
+      sim.guide.forEach((line) => {
+        const div = document.createElement("div");
+        div.className = "info";
+        div.textContent = line;
+        ui.guideList.appendChild(div);
+      });
+    }
+
+    function renderStudentGuide(sim) {
+      ui.studentGuide.innerHTML = "";
+
+      const blocks = [
+        { title: "¿Qué vas a resolver?", text: sim.studentGuide?.what || "Analizar y resolver el problema lógico planteado en esta simulación." },
+        { title: "¿Qué puedes modificar?", text: sim.studentGuide?.modify || "Puedes cambiar entradas, compuertas, conexiones y volver a probar." },
+        { title: "¿Qué debes observar?", text: sim.studentGuide?.observe || "Debes observar cómo cambian las salidas y el comportamiento del sistema." },
+        { title: "¿Qué debes lograr?", text: sim.studentGuide?.goal || "Debes lograr que el circuito coincida con la tabla de verdad del ejercicio." }
+      ];
+
+      blocks.forEach((block) => {
+        const div = document.createElement("div");
+        div.className = "info";
+        div.innerHTML = `<strong>${block.title}</strong><p style="margin-top:6px;">${block.text}</p>`;
+        ui.studentGuide.appendChild(div);
+      });
+    }
+
+
+    function sourceOptions(sim, state) {
+      const options = [];
+      sim.inputs.forEach((input) => options.push({ label: input.label, ref: sensorRef(input.key) }));
+      options.push({ label: "1", ref: constRef(1) });
+      options.push({ label: "0", ref: constRef(0) });
+      state.gates.forEach((gate) => options.push({ label: `G${gate.id}`, ref: gateRef(gate.id) }));
+      return options;
+    }
+
+    function renderGateBuilder(sim, state) {
+      const options = sourceOptions(sim, state);
+      ui.gateList.innerHTML = "";
+      state.gates.forEach((gate) => {
+        const card = document.createElement("div");
+        card.className = "gate-card";
+        const inputFields = gate.inputs.map((current, index) => {
+          const selectId = `gate-${gate.id}-input-${index}`;
+          return `
+            <div style="margin-top:10px;">
+              <label for="${selectId}">Entrada ${index + 1}</label>
+              <select data-role="gate-input" data-gate="${gate.id}" data-index="${index}" id="${selectId}">
+                ${options.map((opt) => `<option value='${JSON.stringify(opt.ref)}' ${sameRef(current, opt.ref) ? "selected" : ""}>${opt.label}</option>`).join("")}
+              </select>
+            </div>
+          `;
+        }).join("");
+        card.innerHTML = `
+          <h4>Compuerta G${gate.id}</h4>
+          <div class="row">
+            <select data-role="gate-type" data-gate="${gate.id}">
+              <option value="AND" ${gate.type === "AND" ? "selected" : ""}>AND</option>
+              <option value="OR" ${gate.type === "OR" ? "selected" : ""}>OR</option>
+              <option value="NOT" ${gate.type === "NOT" ? "selected" : ""}>NOT</option>
+            </select>
+            <button class="btn" data-role="remove-gate" data-gate="${gate.id}">Eliminar</button>
+          </div>
+          ${inputFields}
+        `;
+        ui.gateList.appendChild(card);
+      });
+
+      const outputCard = document.createElement("div");
+      outputCard.className = "gate-card";
+      outputCard.innerHTML = `<h4>Conexión de salidas finales</h4>`;
+      sim.outputs.forEach((output, index) => {
+        const div = document.createElement("div");
+        div.style.marginTop = index ? "10px" : "0";
+        div.innerHTML = `
+          <label for="out-${output.key}">${output.label}</label>
+          <select data-role="output-map" data-output="${output.key}" id="out-${output.key}">
+            ${options.map((opt) => `<option value='${JSON.stringify(opt.ref)}' ${sameRef(state.outputsMap[output.key], opt.ref) ? "selected" : ""}>${opt.label}</option>`).join("")}
+          </select>
+        `;
+        outputCard.appendChild(div);
+      });
+      ui.gateList.appendChild(outputCard);
+
+      ui.gateList.querySelectorAll("select[data-role='gate-type']").forEach((sel) => {
+        sel.onchange = (e) => {
+          const gate = state.gates.find((g) => g.id === Number(e.target.dataset.gate));
+          gate.type = e.target.value;
+          gate.inputs = gate.inputs.slice(0, gate.type === "NOT" ? 1 : 2);
+          while (gate.inputs.length < (gate.type === "NOT" ? 1 : 2)) gate.inputs.push(sensorRef(sim.inputs[0].key));
+          render();
+        };
+      });
+      ui.gateList.querySelectorAll("button[data-role='remove-gate']").forEach((btn) => {
+        btn.onclick = (e) => {
+          const id = Number(e.target.dataset.gate);
+          state.gates = state.gates.filter((g) => g.id !== id);
+          state.gates.forEach((gate) => {
+            gate.inputs = gate.inputs.map((input) => input && input.kind === "gate" && input.id === id ? null : input);
+          });
+          sim.outputs.forEach((output) => {
+            const ref = state.outputsMap[output.key];
+            if (ref && ref.kind === "gate" && ref.id === id) state.outputsMap[output.key] = null;
+          });
+          normalizeGateReferences(state);
+          render();
+        };
+      });
+      ui.gateList.querySelectorAll("select[data-role='gate-input']").forEach((sel) => {
+        sel.onchange = (e) => {
+          const gate = state.gates.find((g) => g.id === Number(e.target.dataset.gate));
+          const index = Number(e.target.dataset.index);
+          gate.inputs[index] = JSON.parse(e.target.value);
+          render(false);
+        };
+      });
+      ui.gateList.querySelectorAll("select[data-role='output-map']").forEach((sel) => {
+        sel.onchange = (e) => {
+          state.outputsMap[e.target.dataset.output] = JSON.parse(e.target.value);
+          render(false);
+        };
+      });
+      ui.builderStatus.textContent = state.gates.length
+        ? `Compuertas activas: ${state.gates.length}. Puedes modificar entradas, tipos y salidas.`
+        : "El circuito está vacío.";
+      ui.builderStatus.className = "status";
+    }
+
+    function sameRef(a, b) {
+      return JSON.stringify(a || null) === JSON.stringify(b || null);
+    }
+
+    function renderLogicSvg(sim, state, inputValues, actualOutputs) {
+      const width = 1040;
+      const height = 560;
+      const sourceYs = [];
+      const gateYs = [];
+      const outputYs = [];
+      let svg = `<rect width="${width}" height="${height}" fill="#fbfdff"></rect>`;
+      svg += `<text x="60" y="34" fill="#24364a" font-size="18">Fuentes</text>`;
+      svg += `<text x="356" y="34" fill="#24364a" font-size="18">Compuertas</text>`;
+      svg += `<text x="860" y="34" fill="#24364a" font-size="18">Salidas</text>`;
+
+      const sources = sourceOptions(sim, { gates: [] }).slice(0, sim.inputs.length + 2);
+      sources.forEach((source, index) => {
+        const y = 80 + index * 66;
+        sourceYs.push({ ref: source.ref, x: 115, y });
+        const value = source.ref.kind === "sensor" ? inputValues[source.ref.key] : source.ref.value;
+        svg += rectNode(36, y - 18, 150, 36, "#eef5fb", "#ccdcea", `${source.label} = ${value}`);
+      });
+
+      state.gates.forEach((gate, index) => {
+        const col = index % 3;
+        const row = Math.floor(index / 3);
+        const x = 300 + col * 185;
+        const y = 90 + row * 130;
+        gateYs.push({ id: gate.id, x: x + 110, y: y + 28 });
+        svg += rectNode(x, y, 110, 56, "#eef5fb", "#ccdcea", `${gate.type}  G${gate.id}`);
+        gate.inputs.forEach((input, inputIndex) => {
+          const py = gate.type === "NOT" ? y + 28 : y + 18 + inputIndex * 20;
+          svg += circleNode(x - 12, py, 7, "#ffd166");
+          const from = findRefPoint(sourceYs, gateYs, input);
+          if (from) svg += wirePath(from.x, from.y, x - 12, py, refValue(sim, state, inputValues, input));
+        });
+      });
+
+      sim.outputs.forEach((output, index) => {
+        const y = 110 + index * 90;
+        outputYs.push({ key: output.key, x: 840, y });
+        svg += rectNode(840, y - 18, 140, 36, "#fbf6e9", "#ead7a2", `${output.label} = ${actualOutputs[output.key]}`);
+        const from = findRefPoint(sourceYs, gateYs, state.outputsMap[output.key]);
+        if (from) svg += wirePath(from.x, from.y, 840, y, refValue(sim, state, inputValues, state.outputsMap[output.key]));
+      });
+
+      ui.logicSvg.innerHTML = svg;
+    }
+
+    function rectNode(x, y, w, h, fill, stroke, label) {
+      return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="${fill}" stroke="${stroke}"></rect>
+        <text x="${x + 14}" y="${y + 23}" fill="#24364a" font-size="16">${escapeXml(label)}</text>`;
+    }
+
+    function circleNode(x, y, r, fill) {
+      return `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="#8aa1b7"></circle>`;
+    }
+
+    function wirePath(x1, y1, x2, y2, active) {
+      const mid = x1 + (x2 - x1) * 0.52;
+      const color = active ? "#22a35a" : "#8699ac";
+      return `<path d="M ${x1} ${y1} L ${mid} ${y1} L ${mid} ${y2} L ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="3"></path>`;
+    }
+
+    function findRefPoint(sourceYs, gateYs, ref) {
+      if (!ref) return null;
+      if (ref.kind === "sensor" || ref.kind === "const") {
+        return sourceYs.find((item) => sameRef(item.ref, ref)) || null;
+      }
+      if (ref.kind === "gate") {
+        return gateYs.find((item) => item.id === ref.id) || null;
+      }
+      return null;
+    }
+
+    function refValue(sim, state, inputValues, ref) {
+      if (!ref) return 0;
+      if (ref.kind === "sensor") return inputValues[ref.key] ? 1 : 0;
+      if (ref.kind === "const") return ref.value ? 1 : 0;
+      return evaluateCircuit(sim, state, inputValues)[Object.keys(sim.outputs[0] || {})[0]] || 0;
+    }
+
+    function renderTruthTable(sim, inputValues) {
+      const rows = makeTruthRows(sim);
+      ui.truthHead.innerHTML = "";
+      ui.truthBody.innerHTML = "";
+      const tr = document.createElement("tr");
+      sim.inputs.forEach((input) => {
+        const th = document.createElement("th");
+        th.textContent = input.label;
+        tr.appendChild(th);
+      });
+      sim.outputs.forEach((output) => {
+        const th = document.createElement("th");
+        th.textContent = output.label;
+        tr.appendChild(th);
+      });
+      ui.truthHead.appendChild(tr);
+
+      const currentKey = sim.inputs.map((input) => inputValues[input.key]).join("");
+      rows.forEach((row) => {
+        const line = document.createElement("tr");
+        const rowKey = sim.inputs.map((input) => row.input[input.key]).join("");
+        if (rowKey === currentKey) line.classList.add("current");
+        sim.inputs.forEach((input) => {
+          const td = document.createElement("td");
+          td.textContent = row.input[input.key];
+          line.appendChild(td);
+        });
+        sim.outputs.forEach((output) => {
+          const td = document.createElement("td");
+          td.textContent = row.out[output.key];
+          line.appendChild(td);
+        });
+        ui.truthBody.appendChild(line);
+      });
+      return rows;
+    }
+
+    function renderControls(sim, state, inputValues, actualOutputs) {
+      ui.controlsPanel.innerHTML = "";
+      if (sim.id === "sim1") {
+        const mode = document.createElement("div");
+        mode.className = "info";
+        mode.innerHTML = `
+          <strong>Modo del garaje</strong>
+          <div class="toolbar" style="margin-top:10px;">
+            <button class="btn" id="autoModeBtn">Modo automático</button>
+            <button class="btn" id="manualModeBtn">Modo manual</button>
+          </div>
+          <div class="toolbar" style="margin-top:10px;">
+            <button class="btn" id="launchBtn">Lanzar vehículo</button>
+            <button class="btn" id="forceBtn">Insistir paso</button>
+            <button class="btn" id="stopBtn">Detener vehículo</button>
+            <button class="btn" id="resetSceneBtn">Reiniciar escena</button>
+          </div>
+          <div style="margin-top:10px;">
+            <label for="doorSlider">Posición manual de puerta</label>
+            <input type="range" id="doorSlider" min="0" max="100" value="${state.data.manual.door}">
+          </div>
+        `;
+        ui.controlsPanel.appendChild(mode);
+        const inputs = document.createElement("div");
+        inputs.className = "info";
+        inputs.innerHTML = `
+          <strong>Entradas visibles</strong>
+          <div class="input-grid" style="margin-top:10px;">
+            <label class="toggle"><span>X</span><input type="checkbox" id="inputX" ${state.data.manual.X ? "checked" : ""}></label>
+            <label class="toggle"><span>Z</span><input type="checkbox" id="inputZ" ${state.data.manual.Z ? "checked" : ""}></label>
+            <div class="info"><strong>B</strong><p>${inputValues.B}</p></div>
+            <div class="info"><strong>S</strong><p>${inputValues.S}</p></div>
+          </div>
+        `;
+        ui.controlsPanel.appendChild(inputs);
+        document.getElementById("autoModeBtn").onclick = () => { state.data.mode = "auto"; render(); };
+        document.getElementById("manualModeBtn").onclick = () => { state.data.mode = "manual"; state.data.extra.active = false; render(); };
+        document.getElementById("launchBtn").onclick = () => {
+          state.data.mode = "auto";
+          state.data.extra.active = true;
+          state.data.extra.force = false;
+          state.data.extra.crashed = false;
+          state.data.extra.carX = 690;
+          render();
+        };
+        document.getElementById("forceBtn").onclick = () => {
+          state.data.mode = "auto";
+          state.data.extra.active = true;
+          state.data.extra.force = true;
+          state.data.extra.crashed = false;
+          render();
+        };
+        document.getElementById("stopBtn").onclick = () => {
+          state.data.extra.active = false;
+          state.data.extra.force = false;
+          render(false);
+        };
+        document.getElementById("resetSceneBtn").onclick = () => {
+          state.data.mode = "auto";
+          state.data.manual.X = 0;
+          state.data.manual.Z = 0;
+          state.data.manual.door = 0;
+          state.data.extra.doorPos = 0;
+          state.data.extra.carX = 690;
+          state.data.extra.active = false;
+          state.data.extra.force = false;
+          state.data.extra.crashed = false;
+          render(false);
+        };
+        document.getElementById("doorSlider").oninput = (e) => {
+          state.data.manual.door = Number(e.target.value);
+          state.data.extra.doorPos = state.data.manual.door / 100;
+          render(false);
+        };
+        document.getElementById("inputX").onchange = (e) => { state.data.manual.X = e.target.checked ? 1 : 0; render(false); };
+        document.getElementById("inputZ").onchange = (e) => { state.data.manual.Z = e.target.checked ? 1 : 0; render(false); };
+      } else {
+        const inputCard = document.createElement("div");
+        inputCard.className = "info";
+        inputCard.innerHTML = `<strong>Entradas de prueba</strong>`;
+        const wrap = document.createElement("div");
+        wrap.className = sim.inputs.length > 3 ? "input-grid" : "form-grid";
+        wrap.style.marginTop = "10px";
+        sim.inputs.forEach((input) => {
+          const label = document.createElement("label");
+          label.className = "toggle";
+          label.innerHTML = `<span>${input.label}</span><input type="checkbox" data-input="${input.key}" ${state.data.manual[input.key] ? "checked" : ""}>`;
+          wrap.appendChild(label);
+        });
+        inputCard.appendChild(wrap);
+        ui.controlsPanel.appendChild(inputCard);
+        wrap.querySelectorAll("input[data-input]").forEach((box) => {
+          box.onchange = (e) => {
+            state.data.manual[e.target.dataset.input] = e.target.checked ? 1 : 0;
+            render(false);
+          };
+        });
+      }
+
+      const outCard = document.createElement("div");
+      outCard.className = "info";
+      outCard.innerHTML = `<strong>Salidas observadas</strong>`;
+      const outWrap = document.createElement("div");
+      outWrap.className = "out-grid";
+      outWrap.style.marginTop = "10px";
+      sim.outputs.forEach((output) => {
+        const box = document.createElement("div");
+        box.className = "info";
+        box.innerHTML = `<strong>${output.label}</strong><p>${actualOutputs[output.key]}</p>`;
+        outWrap.appendChild(box);
+      });
+      outCard.appendChild(outWrap);
+      ui.controlsPanel.appendChild(outCard);
+    }
+
+    function renderFormulas(sim) {
+      ui.formulaGrid.style.display = APP.formulasVisible ? "grid" : "none";
+      ui.formulaGrid.innerHTML = "";
+      Object.entries(sim.formulas).forEach(([key, formula]) => {
+        const div = document.createElement("div");
+        div.className = "formula";
+        div.innerHTML = `<strong>${key}</strong><p style="margin-top:8px;color:#45376f;font-weight:600;">${formula}</p>`;
+        ui.formulaGrid.appendChild(div);
+      });
+    }
+
+    function renderValidation(sim, rows, inputValues, actualOutputs) {
+      let total = 0;
+      let ok = 0;
+      rows.forEach((row) => {
+        const out = sim.reference(row.input);
+        const circuitOut = evaluateCircuit(sim, currentState(), row.input);
+        sim.outputs.forEach((output) => {
+          total += 1;
+          if (out[output.key] === circuitOut[output.key]) ok += 1;
+        });
+      });
+      const percent = total ? Math.round((ok / total) * 100) : 0;
+      ui.matchValue.textContent = percent + "%";
+      ui.matchNote.textContent = percent === 100 ? "Circuito correcto." : percent >= 65 ? "Hay avances, pero faltan casos." : "El circuito aún no coincide.";
+      const expected = sim.reference(inputValues);
+      const rowHits = sim.outputs.filter((output) => expected[output.key] === actualOutputs[output.key]).length;
+      ui.rowValue.textContent = `${rowHits}/${sim.outputs.length}`;
+      ui.rowNote.textContent = rowHits === sim.outputs.length ? "Fila correcta." : "Fila incorrecta.";
+      ui.inputStateValue.textContent = sim.inputs.map((input) => `${input.label}:${inputValues[input.key]}`).join(" ");
+      ui.outputStateValue.textContent = sim.outputs.map((output) => `${output.label}:${actualOutputs[output.key]}`).join(" ");
+      ui.redLight.className = "light red";
+      ui.yellowLight.className = "light yellow";
+      ui.greenLight.className = "light green";
+      if (percent === 100) ui.greenLight.classList.add("on");
+      else if (percent >= 65) ui.yellowLight.classList.add("on");
+      else ui.redLight.classList.add("on");
+      const errors = sim.outputs.filter((output) => expected[output.key] !== actualOutputs[output.key]).map((output) => output.label);
+      ui.validationStatus.className = "status " + (!errors.length ? "ok" : "bad");
+      ui.validationStatus.textContent = !errors.length
+        ? sim.status(currentState().data, actualOutputs)
+        : `No coincide en: ${errors.join(", ")}. ${sim.status(currentState().data, actualOutputs)}`;
+    }
+
+    function renderScene(sim, state, actualOutputs) {
+      ui.sceneImage.style.display = sim.sceneImage ? "block" : "none";
+      ui.sceneImage.src = sim.sceneImage || "";
+      sim.renderScene(state.data, actualOutputs, ui.sceneSvg);
+      ui.sceneStatus.textContent = sim.status(state.data, actualOutputs);
+    }
+
+    function genericScene(svg, title, lines, color) {
+      svg.innerHTML = `
+        <rect width="860" height="430" fill="#fbfdff"></rect>
+        <rect x="38" y="38" width="784" height="354" rx="18" fill="#f7fafc" stroke="#d8e3ee"></rect>
+        <text x="62" y="78" fill="#45376f" font-size="24">${escapeXml(title)}</text>
+        <circle cx="748" cy="88" r="28" fill="${color}"></circle>
+        ${lines.map((line, index) => `<text x="62" y="${140 + index * 44}" fill="#24364a" font-size="20">${escapeXml(line)}</text>`).join("")}
+      `;
+    }
+
+    function sensorFloor(x, ground, label, active) {
+      return `
+        <rect x="${x - 18}" y="${ground}" width="36" height="24" fill="${active ? "#bbf7d0" : "#fff"}" stroke="#1b2026" stroke-width="2.5"></rect>
+        <text x="${x - 10}" y="${ground + 56}" fill="#10151b" font-size="28">${label}</text>
+      `;
+    }
+
+    function sensorTop(x, y, label, active) {
+      return `
+        <rect x="${x - 18}" y="${y}" width="36" height="24" fill="${active ? "#bbf7d0" : "#fff"}" stroke="#1b2026" stroke-width="2.5"></rect>
+        <text x="${x - 8}" y="${y - 8}" fill="#10151b" font-size="28">${label}</text>
+      `;
+    }
+
+    function carSvg(x, y, crashed) {
+      return `
+        <g stroke="${crashed ? "#de4d65" : "#1b2026"}" stroke-width="3" fill="#fff">
+          <path d="M ${x} ${y} L ${x + 10} ${y - 26} L ${x + 80} ${y - 30} L ${x + 102} ${y - 58} L ${x + 170} ${y - 58} L ${x + 198} ${y - 26} L ${x + 198} ${y} Z"></path>
+          <circle cx="${x + 48}" cy="${y}" r="16"></circle>
+          <circle cx="${x + 164}" cy="${y}" r="16"></circle>
+          ${crashed ? `<text x="${x + 34}" y="${y - 82}" fill="#de4d65" font-size="22">CHOQUE</text>` : ""}
+        </g>
+      `;
+    }
+
+    function lampSvg(x, y, on, color, label) {
+      return `
+        <circle cx="${x}" cy="${y}" r="16" fill="${on ? color : "#cbd5e1"}" stroke="#1b2026" stroke-width="2"></circle>
+        <text x="${x - 7}" y="${y + 38}" fill="#24364a" font-size="20">${label}</text>
+      `;
+    }
+
+    function escapeXml(text) {
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+    }
+
+    function addGate() {
+      const sim = currentSim();
+      const state = currentState();
+      normalizeGateReferences(state);
+      const nextId = state.gates.length ? Math.max(...state.gates.map((g) => g.id)) + 1 : 1;
+      const type = ui.newGateType.value;
+      state.gates.push({
+        id: nextId,
+        type,
+        inputs: new Array(type === "NOT" ? 1 : 2).fill(sensorRef(sim.inputs[0].key))
+      });
+      render();
+    }
+
+    function resetCircuit() {
+      states[APP.currentSimId] = createStateForSim(currentSim());
+      render();
+    }
+
+    function runStep(dt = 0.12) {
+      const sim = currentSim();
+      const state = currentState();
+      const inputs = sim.getInputs(state.data);
+      const outputs = evaluateCircuit(sim, state, inputs);
+      sim.step(state.data, outputs, dt);
+      render(false);
+    }
+
+    function render(showError = true) {
+      try {
+        ui.errorBox.style.display = "none";
+        ui.errorBox.textContent = "";
+        buildNav();
+        const sim = currentSim();
+        const state = currentState();
+        const inputValues = sim.getInputs(state.data);
+        const actualOutputs = evaluateCircuit(sim, state, inputValues);
+
+        ui.simTitle.textContent = sim.title;
+        ui.simSubtitle.textContent = sim.subtitle;
+        ui.simInputs.textContent = sim.inputs.map((x) => x.label).join(", ");
+        ui.simOutputs.textContent = sim.outputs.map((x) => x.label).join(", ");
+        ui.simType.textContent = sim.type;
+        ui.topState.textContent = sim.title;
+
+        renderStatements(sim);
+        renderGuide(sim);
+        renderStudentGuide(sim);
+        renderGateBuilder(sim, state);
+        renderLogicSvg(sim, state, inputValues, actualOutputs);
+        const rows = renderTruthTable(sim, inputValues);
+        renderControls(sim, state, inputValues, actualOutputs);
+        renderFormulas(sim);
+        renderValidation(sim, rows, inputValues, actualOutputs);
+        renderScene(sim, state, actualOutputs);
+      } catch (error) {
+        if (showError) {
+          ui.errorBox.style.display = "block";
+          ui.errorBox.textContent = "Error detectado: " + error.message;
+          ui.topState.textContent = "Se detectó un error en tiempo de ejecución";
+        }
+        console.error(error);
+      }
+    }
+
+    ui.addGateBtn.onclick = addGate;
+    ui.loadGuideBtn.onclick = () => {
+      const sim = currentSim();
+      const state = currentState();
+      const circuit = sim.guideCircuit();
+      state.gates = circuit.gates.map((gate, index) => ({
+        id: index + 1,
+        type: gate.type,
+        inputs: gate.inputs.map(cloneRef)
+      }));
+      state.outputsMap = Object.fromEntries(sim.outputs.map((output) => [output.key, cloneRef(circuit.outputs[output.key] || null)]));
+      render();
+    };
+    ui.resetCircuitBtn.onclick = resetCircuit;
+    ui.toggleFormulasBtn.onclick = () => {
+      APP.formulasVisible = !APP.formulasVisible;
+      render(false);
+    };
+    ui.stepBtn.onclick = () => runStep(0.16);
+
+    window.addEventListener("error", (event) => {
+      ui.errorBox.style.display = "block";
+      ui.errorBox.textContent = "Error detectado: " + event.message;
+      ui.topState.textContent = "Error detectado";
+    });
+
+    render();
+
+    setInterval(() => {
+      const sim = currentSim();
+      const state = currentState();
+      try {
+        if (sim.id === "sim1" && state.data.mode === "auto" && state.data.extra.active) {
+          runStep(0.08);
+        }
+      } catch (error) {
+        state.data.extra.active = false;
+        state.data.extra.force = false;
+        ui.errorBox.style.display = "block";
+        ui.errorBox.textContent = "La simulación automática se detuvo por seguridad: " + error.message;
+        ui.topState.textContent = "Simulación detenida por seguridad";
+        console.error(error);
+      }
+    }, 80);
+  </script>
+</body>
+</html>
